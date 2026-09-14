@@ -106,8 +106,12 @@
   "artifact": {
     "filename": "itih_catboost_v1.cbm",
     "included": false,
-    "sha256": null,
-    "verification_status": "awaiting original serialized model"
+    "distribution": "github-release",
+    "release_tag": "v0.1.0",
+    "release_url": "https://github.com/davidmascolo/ITIH/releases/tag/v0.1.0",
+    "download_url": "https://github.com/davidmascolo/ITIH/releases/download/v0.1.0/itih_catboost_v1.cbm",
+    "sha256": "d787a8ec308cace285541fbe76aefc3bbe9d2a545c9d3eabe93c87f4041af257",
+    "verification_status": "sha256-pinned"
   },
   "reference": {
     "title": "Intratumoral Immune Heterogeneity Drives Divergent Outcomes to PD-(L)1 Blockade in Lung Cancer",

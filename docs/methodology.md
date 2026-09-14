@@ -52,7 +52,6 @@ The v1 model contract records:
 |---|---:|
 | Algorithm | `CatBoostClassifier` |
 | Loss | `MultiClass` |
-| Iterations / trees | 610 |
 | Depth | 9 |
 | Learning rate | 0.05 |
 | L2 leaf regularization | 8 |

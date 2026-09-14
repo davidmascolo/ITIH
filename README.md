@@ -70,19 +70,23 @@ Python 3.9 or later is required.
 
 ## Model availability
 
-The serialized model is not included in the current repository release. Once
-distribution has been approved, the versioned model should be made available
-as:
+The trained CatBoost model is distributed separately as the versioned GitHub
+Release asset `itih_catboost_v1.cbm`. Keeping the binary outside the source
+repository makes the codebase lightweight while preserving a fixed,
+traceable inference artifact.
 
-```text
-src/itih/assets/itih_catboost_v1.cbm
+On first use, the Python interface downloads the model to the local user cache
+and verifies its SHA-256 checksum against
+[`model_metadata.json`](src/itih/assets/model_metadata.json). Subsequent runs
+reuse the verified local copy.
+
+The model can also be downloaded in advance:
+
+```bash
+itih download-model
 ```
 
-The file can either be included in the repository or distributed as a GitHub
-Release asset. Its checksum and release information should be recorded in
-[`model_metadata.json`](src/itih/assets/model_metadata.json).
-
-When the model is stored outside the package, provide its path explicitly:
+To use a manually downloaded copy, provide its path explicitly:
 
 ```python
 from itih import ITIHPredictor
@@ -90,8 +94,8 @@ from itih import ITIHPredictor
 predictor = ITIHPredictor.from_pretrained("/path/to/itih_catboost_v1.cbm")
 ```
 
-See [`src/itih/assets/README.md`](src/itih/assets/README.md) for the model
-release checklist.
+The release asset and its checksum are documented in
+[`src/itih/assets/README.md`](src/itih/assets/README.md).
 
 ## Input data
 
@@ -123,6 +127,9 @@ available in [`examples/example_input.tsv`](examples/example_input.tsv).
 ## Command-line usage
 
 ```bash
+# Optional: download and verify the model before inference
+itih download-model
+
 itih predict \
   --input examples/example_input.tsv \
   --output itih_predictions.tsv
@@ -161,54 +168,30 @@ or treatment benefit.
 
 ## Use from R
 
-The native CatBoost `.cbm` model can also be loaded and applied in R. The input
-must undergo the same validation, feature ordering and discretization used by
-the Python package.
+The same `.cbm` artifact can be applied from RStudio or an R session using the
+CatBoost R package. It is not opened as an R data file: it is loaded with
+`catboost.load_model()`. Input data must retain the documented 29-feature order
+and use the same three-level discretization.
 
 ```r
 library(catboost)
 
-feature_names <- c(
-  "MHCI", "MHCII", "Coactivation_molecules", "Effector_cells",
-  "T_cell_traffic", "NK_cells", "T_cells", "B_cells",
-  "M1_signatures", "Th1_signature", "Antitumor_cytokines",
-  "Checkpoint_inhibition", "Treg", "T_reg_traffic",
-  "Neutrophil_signature", "Granulocyte_traffic", "MDSC",
-  "MDSC_traffic", "Macrophages", "Macrophage_DC_traffic",
-  "Th2_signature", "Protumor_cytokines", "CAF", "Matrix",
-  "Matrix_remodeling", "Angiogenesis", "Endothelium",
-  "Proliferation_rate", "EMT_signature"
-)
-
-scores <- read.delim("signatures.tsv", check.names = FALSE)
-sample_id <- scores$sample_id
-x <- scores[, feature_names, drop = FALSE]
-
-encode_score <- function(value) {
-  factor(
-    ifelse(value <= -0.75, "0", ifelse(value <= 0.75, "1", "2")),
-    levels = c("0", "1", "2")
-  )
-}
-
-x_binned <- as.data.frame(lapply(x, encode_score), check.names = FALSE)
-pool <- catboost.load_pool(x_binned, feature_names = feature_names)
+# `x_binned` is a data.frame of the 29 categorical features.
+pool <- catboost.load_pool(x_binned)
 model <- catboost.load_model("itih_catboost_v1.cbm")
-
-class_id <- as.integer(
-  catboost.predict(model, pool, prediction_type = "Class")
-)
-
-class_labels <- c("Hom-D", "Hom-IE", "Het-D", "Het-IE")
-results <- data.frame(
-  sample_id = sample_id,
-  class_id = class_id,
-  itih_class = class_labels[class_id + 1]
-)
+class_id <- as.integer(catboost.predict(model, pool, prediction_type = "Class"))
 ```
 
-An official R wrapper with shared validation tests is planned for a future
-release. Until then, the Python interface is the reference implementation.
+The complete reference script
+[`examples/predict.R`](examples/predict.R) downloads and verifies the release
+asset, validates and discretizes a TSV input, and writes the four-class result:
+
+```bash
+Rscript examples/predict.R signatures.tsv predictions.tsv
+```
+
+The Python package remains the reference implementation for input validation
+and model inference.
 
 ## Reproducibility
 
@@ -248,4 +231,4 @@ Citation metadata for the software and article are available in
 Source code and documentation are released under the [MIT License](LICENSE).
 This license does not automatically cover the serialized model, patient-level
 data, third-party MFP resources or the published article. Redistribution terms
-for the model must be confirmed before release.
+for those materials should be reviewed independently.

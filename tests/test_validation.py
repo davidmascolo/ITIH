@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import hashlib
+import io
 import json
 from pathlib import Path
 
@@ -8,7 +10,13 @@ import pandas as pd
 import pytest
 
 from itih.constants import CLASS_LABELS, EXPECTED_TREE_COUNT, FEATURE_NAMES
-from itih.predictor import ITIHPredictor, ModelNotAvailableError
+from itih import predictor as predictor_module
+from itih.predictor import (
+    ITIHPredictor,
+    IncompatibleModelError,
+    ModelNotAvailableError,
+    download_model,
+)
 from itih.preprocessing import InputValidationError, prepare_scores, validate_scores
 
 
@@ -63,7 +71,7 @@ def test_reads_sample_id_column_from_tsv(tmp_path: Path) -> None:
 
 def test_missing_model_fails_before_catboost_is_needed(tmp_path: Path) -> None:
     predictor = ITIHPredictor.from_pretrained(tmp_path / "missing.cbm")
-    with pytest.raises(ModelNotAvailableError, match=str(EXPECTED_TREE_COUNT)):
+    with pytest.raises(ModelNotAvailableError, match="not found"):
         predictor.predict(make_scores())
 
 
@@ -79,6 +87,67 @@ def test_model_metadata_matches_public_contract() -> None:
         str(key): value for key, value in CLASS_LABELS.items()
     }
     assert metadata["artifact"]["included"] is False
+    assert metadata["artifact"]["release_tag"] == "v0.1.0"
+    assert metadata["artifact"]["download_url"].endswith(
+        "/v0.1.0/itih_catboost_v1.cbm"
+    )
+    assert metadata["artifact"]["sha256"] == (
+        "d787a8ec308cace285541fbe76aefc3bbe9d2a545c9d3eabe93c87f4041af257"
+    )
+
+
+def test_download_model_verifies_and_reuses_file(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    payload = b"synthetic model bytes"
+    expected_sha256 = hashlib.sha256(payload).hexdigest()
+    metadata = {
+        "artifact": {
+            "download_url": "https://example.test/itih_catboost_v1.cbm",
+            "sha256": expected_sha256,
+        }
+    }
+    monkeypatch.setattr(predictor_module, "load_model_metadata", lambda: metadata)
+
+    calls = []
+
+    def fake_urlopen(request: object, timeout: int) -> io.BytesIO:
+        calls.append((request, timeout))
+        return io.BytesIO(payload)
+
+    monkeypatch.setattr(predictor_module, "urlopen", fake_urlopen)
+    target = tmp_path / "models" / "itih_catboost_v1.cbm"
+
+    assert download_model(target) == target
+    assert target.read_bytes() == payload
+    assert len(calls) == 1
+
+    assert download_model(target) == target
+    assert len(calls) == 1
+
+
+def test_download_model_discards_checksum_mismatch(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    metadata = {
+        "artifact": {
+            "download_url": "https://example.test/itih_catboost_v1.cbm",
+            "sha256": hashlib.sha256(b"expected").hexdigest(),
+        }
+    }
+    monkeypatch.setattr(predictor_module, "load_model_metadata", lambda: metadata)
+    monkeypatch.setattr(
+        predictor_module,
+        "urlopen",
+        lambda request, timeout: io.BytesIO(b"different"),
+    )
+    target = tmp_path / "itih_catboost_v1.cbm"
+
+    with pytest.raises(IncompatibleModelError, match="checksum mismatch"):
+        download_model(target)
+
+    assert not target.exists()
+    assert list(tmp_path.glob("*.part")) == []
 
 
 def test_probability_scores_follow_public_mapping_not_model_order() -> None:

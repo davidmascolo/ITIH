@@ -7,7 +7,15 @@ from .constants import (
     LOW_THRESHOLD,
     PACKAGE_VERSION,
 )
-from .predictor import ITIHPredictor, IncompatibleModelError, ModelNotAvailableError
+from .predictor import (
+    ITIHPredictor,
+    IncompatibleModelError,
+    ModelDownloadError,
+    ModelNotAvailableError,
+    calculate_sha256,
+    download_model,
+    verify_model_checksum,
+)
 from .preprocessing import (
     InputValidationError,
     discretize_scores,
@@ -26,9 +34,13 @@ __all__ = [
     "IncompatibleModelError",
     "InputValidationError",
     "LOW_THRESHOLD",
+    "ModelDownloadError",
     "ModelNotAvailableError",
+    "calculate_sha256",
     "discretize_scores",
+    "download_model",
     "prepare_catboost_input",
     "prepare_scores",
     "validate_scores",
+    "verify_model_checksum",
 ]

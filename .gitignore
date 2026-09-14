@@ -19,6 +19,7 @@ htmlcov/
 
 # Editors and operating systems
 .DS_Store
+.Rhistory
 .idea/
 .vscode/
 

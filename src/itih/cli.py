@@ -7,7 +7,7 @@ import sys
 from pathlib import Path
 from typing import Sequence
 
-from .predictor import ITIHPredictor
+from .predictor import ITIHPredictor, download_model
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -36,6 +36,27 @@ def build_parser() -> argparse.ArgumentParser:
         action="store_true",
         help="omit the four uncalibrated model-score columns",
     )
+    predict_parser.add_argument(
+        "--no-download",
+        action="store_true",
+        help="do not download the release model when it is absent",
+    )
+
+    download_parser = subparsers.add_parser(
+        "download-model",
+        help="download and verify the versioned model",
+    )
+    download_parser.add_argument(
+        "--output",
+        type=Path,
+        default=None,
+        help="optional destination (default: platform cache)",
+    )
+    download_parser.add_argument(
+        "--force",
+        action="store_true",
+        help="replace an existing cached model",
+    )
     return parser
 
 
@@ -44,7 +65,15 @@ def run(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
 
     try:
-        predictor = ITIHPredictor.from_pretrained(args.model)
+        if args.command == "download-model":
+            model_path = download_model(args.output, force=args.force)
+            print(f"Model is available at {model_path}")
+            return 0
+
+        predictor = ITIHPredictor.from_pretrained(
+            args.model,
+            download_if_missing=not args.no_download,
+        )
         predictions = predictor.predict(
             args.input,
             sample_id_column=args.sample_id_column,

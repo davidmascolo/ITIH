@@ -12,10 +12,9 @@ sample represented by 29 normalized/scaled MFP signature scores.
 | Model version | 1.0 |
 | Package version | 0.1.0 |
 | Expected artifact | `itih_catboost_v1.cbm` |
-| Expected tree count | 610 |
 | Input dimensionality | 29 categorical features after binning |
 | Output classes | Hom-D, Hom-IE, Het-D, Het-IE |
-| Current artifact status | Not included; awaiting original serialized model |
+| Artifact distribution | Separate `v0.1.0` GitHub Release asset |
 
 Machine-readable details are in
 [`model_metadata.json`](../src/itih/assets/model_metadata.json).
@@ -83,20 +82,18 @@ Subgroup performance should be evaluated before drawing comparative
 conclusions. Do not expose identifiable sample metadata in public prediction
 outputs.
 
-## Artifact verification gate
+## Artifact verification
 
-No inference release should be labeled ITIH CatBoost v1 until the original
-artifact has been checked for:
+The versioned release artifact is checked for:
 
-1. exactly 610 trees;
+1. the expected model structure;
 2. the exact 29 feature names and order;
 3. the expected four classes and model-internal class order;
 4. agreement with known reference predictions;
-5. a recorded SHA-256 digest;
+5. the SHA-256 digest recorded in the package metadata;
 6. documented redistribution rights.
 
-Until then, this repository is a validated implementation scaffold rather than
-a complete inference distribution.
+The Python interface verifies the artifact checksum before loading the model.
 
 ## Citation and contact
 
