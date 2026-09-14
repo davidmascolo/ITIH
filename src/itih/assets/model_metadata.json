@@ -1,0 +1,119 @@
+{
+  "schema_version": "1.0",
+  "model": {
+    "name": "ITIH CatBoost classifier",
+    "version": "1.0",
+    "type": "CatBoostClassifier",
+    "format": "cbm",
+    "iterations": 610,
+    "tree_count": 610,
+    "depth": 9,
+    "learning_rate": 0.05,
+    "l2_leaf_reg": 8,
+    "bagging_temperature": 1,
+    "random_strength": 0.5,
+    "loss_function": "MultiClass",
+    "eval_metric": "TotalF1:average=Macro",
+    "random_seed": 123,
+    "class_weights": [
+      1.8838383838383839,
+      1.4346153846153846,
+      0.5501474926253688,
+      1.047752808988764
+    ],
+    "class_weights_order": [3, 2, 0, 1],
+    "class_weights_by_class_id": {
+      "0": 0.5501474926253688,
+      "1": 1.047752808988764,
+      "2": 1.4346153846153846,
+      "3": 1.8838383838383839
+    },
+    "catboost_class_names_order": [3, 2, 0, 1],
+    "training_catboost_version": "1.2.10",
+    "training_task_type": "GPU",
+    "inference_task_type": "CPU-compatible"
+  },
+  "preprocessing": {
+    "input": "normalized/scaled MFP signature scores",
+    "feature_count": 29,
+    "feature_order": [
+      "MHCI",
+      "MHCII",
+      "Coactivation_molecules",
+      "Effector_cells",
+      "T_cell_traffic",
+      "NK_cells",
+      "T_cells",
+      "B_cells",
+      "M1_signatures",
+      "Th1_signature",
+      "Antitumor_cytokines",
+      "Checkpoint_inhibition",
+      "Treg",
+      "T_reg_traffic",
+      "Neutrophil_signature",
+      "Granulocyte_traffic",
+      "MDSC",
+      "MDSC_traffic",
+      "Macrophages",
+      "Macrophage_DC_traffic",
+      "Th2_signature",
+      "Protumor_cytokines",
+      "CAF",
+      "Matrix",
+      "Matrix_remodeling",
+      "Angiogenesis",
+      "Endothelium",
+      "Proliferation_rate",
+      "EMT_signature"
+    ],
+    "thresholds": {
+      "low": -0.75,
+      "high": 0.75
+    },
+    "bins": {
+      "0": "(-infinity, -0.75]",
+      "1": "(-0.75, 0.75]",
+      "2": "(0.75, infinity)"
+    },
+    "catboost_value_type": "string categorical"
+  },
+  "classes": {
+    "mapping": {
+      "0": "Hom-D",
+      "1": "Hom-IE",
+      "2": "Het-D",
+      "3": "Het-IE"
+    }
+  },
+  "training_data": {
+    "cohort": "TRACERx421",
+    "disease": "non-small cell lung cancer",
+    "n_regions": 746,
+    "n_patients": 246,
+    "split": "stratified 80/20",
+    "split_random_seed": 123
+  },
+  "reported_holdout_performance": {
+    "global_accuracy": 0.613,
+    "Hom-IE": {
+      "precision": 0.658,
+      "recall": 0.694,
+      "f1_score": 0.676
+    },
+    "source": "associated manuscript"
+  },
+  "artifact": {
+    "filename": "itih_catboost_v1.cbm",
+    "included": false,
+    "sha256": null,
+    "verification_status": "awaiting original serialized model"
+  },
+  "reference": {
+    "title": "Intratumoral Immune Heterogeneity Drives Divergent Outcomes to PD-(L)1 Blockade in Lung Cancer",
+    "journal": "Clinical Cancer Research",
+    "year": 2026,
+    "doi": "10.1158/1078-0432.CCR-26-1466",
+    "pmid": "42456046"
+  }
+}

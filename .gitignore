@@ -1,0 +1,26 @@
+# Python bytecode and caches
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Environments and packaging output
+.venv/
+venv/
+build/
+dist/
+*.egg-info/
+
+# Coverage and notebooks
+.coverage
+htmlcov/
+.ipynb_checkpoints/
+
+# Editors and operating systems
+.DS_Store
+.idea/
+.vscode/
+
+# Prediction outputs (example inputs remain tracked)
+itih_predictions.tsv

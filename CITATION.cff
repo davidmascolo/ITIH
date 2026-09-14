@@ -1,0 +1,82 @@
+cff-version: 1.2.0
+message: "If you use ITIH, please cite both this software and the associated article."
+title: "ITIH: single-sample inference of intratumoral immune heterogeneity"
+type: software
+version: 0.1.0
+license: MIT
+authors:
+  - family-names: Mascolo
+    given-names: Davide
+    orcid: "https://orcid.org/0009-0009-8425-1619"
+repository-code: "https://github.com/davidmascolo/ITIH"
+url: "https://github.com/davidmascolo/ITIH"
+keywords:
+  - intratumoral immune heterogeneity
+  - NSCLC
+  - immunotherapy
+  - bioinformatics
+  - CatBoost
+preferred-citation:
+  type: article
+  title: "Intratumoral Immune Heterogeneity Drives Divergent Outcomes to PD-(L)1 Blockade in Lung Cancer"
+  authors:
+    - family-names: Cipriani
+      given-names: Laura
+    - family-names: Mascolo
+      given-names: Davide
+      orcid: "https://orcid.org/0009-0009-8425-1619"
+    - family-names: Scalera
+      given-names: Stefano
+    - family-names: Bon
+      given-names: Giulia
+    - family-names: Schiavoni
+      given-names: Giulia
+    - family-names: Palmese
+      given-names: Antonella
+    - family-names: Terrenato
+      given-names: Irene
+    - family-names: Fanciulli
+      given-names: Maurizio
+    - family-names: Ciuffreda
+      given-names: Ludovica
+    - family-names: De Nicola
+      given-names: Francesca
+    - family-names: Bartoccini
+      given-names: Federico
+    - family-names: Palange
+      given-names: Aldo
+    - family-names: Gallo
+      given-names: Enzo
+    - family-names: Pescarmona
+      given-names: Edoardo
+    - family-names: Buglioni
+      given-names: Simonetta
+    - family-names: Marinelli
+      given-names: Daniele
+    - family-names: Mazzotta
+      given-names: Marco
+    - family-names: Di Federico
+      given-names: Alessandro
+    - family-names: De Maria
+      given-names: Ruggero
+    - family-names: Blandino
+      given-names: Giovanni
+    - family-names: Ricciuti
+      given-names: Biagio
+    - family-names: Salem Zrafi
+      given-names: Wael
+    - family-names: Zullo
+      given-names: Lodovica
+    - family-names: Loriot
+      given-names: Yohann
+    - family-names: Aldea
+      given-names: Mihaela
+    - family-names: Besse
+      given-names: Benjamin
+    - family-names: Cappuzzo
+      given-names: Federico
+    - family-names: Maugeri-Saccà
+      given-names: Marcello
+  journal: Clinical Cancer Research
+  year: 2026
+  doi: "10.1158/1078-0432.CCR-26-1466"
