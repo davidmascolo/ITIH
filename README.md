@@ -25,7 +25,7 @@ Intratumoral variation in immune composition can be missed when a tumour is repr
 
 <p align="center">
   <img
-    src="docs/assets/itih_workflow.svg"
+    src="docs/assets/itih_workflow.png"
     alt="ITIH workflow from bulk RNA sequencing to intratumoral immune heterogeneity classification"
     width="900"
   >
